@@ -1,7 +1,33 @@
 import { Request, Response } from 'express';
 import Product from '../models/product';
 
-export const postProduct = async (req: Request, res: Response) => {};
+export const postProduct = async (
+  req: Request<{}, Product, Omit<Product, 'imageUrl'>, {}>,
+  res: Response<Product>
+) => {
+  try {
+    if (!req.file) {
+      throw new Error('No file included.');
+    }
+
+    const { name, price, maxQuantity, featured, category, creator } = req.body;
+    const c = 'da21d12d12';
+    const imageUrl = 'http://localhost:3000/' + req.file.filename;
+    const product = new Product({
+      name,
+      price,
+      maxQuantity,
+      featured,
+      creator: c,
+      imageUrl,
+      category
+    });
+    const createdProduct = await product.save();
+    res.send(createdProduct);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export const getProducts = async (
   req: Request<

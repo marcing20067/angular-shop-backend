@@ -14,14 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProduct = exports.getProducts = exports.postProduct = void 0;
 const product_1 = __importDefault(require("../models/product"));
-const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
+const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (!req.file) {
+            throw new Error('No file included.');
+        }
+        const { name, price, maxQuantity, featured, category, creator } = req.body;
+        const c = 'da21d12d12';
+        const imageUrl = 'http://localhost:3000/' + req.file.filename;
+        const product = new product_1.default({
+            name,
+            price,
+            maxQuantity,
+            featured,
+            creator: c,
+            imageUrl,
+            category
+        });
+        const createdProduct = yield product.save();
+        res.send(createdProduct);
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
 exports.postProduct = postProduct;
 const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const creator = 'dsadasd';
         const filter = {
             name: req.query.name,
-            featured: req.query.featured,
+            featured: req.query.featured === 'true' ? true : false,
             creator: creator,
         };
         const products = yield product_1.default.find(filter)
@@ -39,7 +62,8 @@ exports.getProducts = getProducts;
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const product = yield product_1.default.findOne({ _id: id });
+        const creator = 'dsadasd';
+        const product = yield product_1.default.findOne({ _id: id, creator });
         if (product) {
             res.send(product);
             return;
