@@ -1,17 +1,22 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '../helpers/custom-error';
 import Product from '../models/product';
 
 export const postProduct = async (
   req: Request<{}, Product, Omit<Product, 'imageUrl'>, {}>,
-  res: Response<Product>
+  res: Response<Product>,
+  next: NextFunction
 ) => {
   try {
     if (!req.file) {
-      throw new Error('No file included.');
+      const error: CustomError = new Error();
+      error.errorMessage = 'No file included.';
+      error.statusCode = 400;
+      throw error;
     }
 
     const { name, price, maxQuantity, featured, category, creator } = req.body;
-    const c = 'da21d12d12';
+    const c = 'creator';
     const imageUrl = 'http://localhost:3000/' + req.file.filename;
     const product = new Product({
       name,
@@ -20,56 +25,73 @@ export const postProduct = async (
       featured,
       creator: c,
       imageUrl,
-      category
+      category,
     });
     const createdProduct = await product.save();
     res.send(createdProduct);
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
 export const getProducts = async (
   req: Request<
     {},
-    Product[],
-    { page: number; itemsPerPage: number },
-    { name?: string; featured?: 'true' | 'false' }
+    { length: number; products: Product[] },
+    {
+      page?: number;
+      itemsPerPage?: number;
+      name?: string;
+      featured?: 'true' | 'false';
+    }
   >,
-  res: Response<Product[]>
+  res: Response<{ length: number; products: Product[] }>,
+  next: NextFunction
 ) => {
   try {
-    const creator = 'dsadasd';
+    const creator = 'creator';
     const filter = {
       name: req.query.name,
       featured: req.query.featured === 'true' ? true : false,
       creator: creator,
     };
 
-    const products = await Product.find(filter)
-      .limit(req.body.itemsPerPage)
-      .skip(req.body.itemsPerPage * req.body.page);
-
-    if (products) {
-      res.send(products);
-      return;
+    const length = await Product.find(filter).countDocuments();
+    let products: Product[];
+    const { itemsPerPage, page } = req.query;
+    if (itemsPerPage && page) {
+      products = await Product.find(filter)
+        .limit(+itemsPerPage)
+        .skip(+itemsPerPage * +page);
+    } else {
+      products = await Product.find(filter);
     }
-    throw new Error("Product doesn't exists");
-  } catch {}
+
+    res.send({ length, products });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getProduct = async (
   req: Request<{ id: string }>,
-  res: Response<Product>
+  res: Response<Product>,
+  next: NextFunction
 ) => {
   const { id } = req.params;
   try {
-    const creator = 'dsadasd';
+    const creator = 'creator';
     const product = await Product.findOne({ _id: id, creator });
     if (product) {
       res.send(product);
       return;
     }
-    throw new Error("Product doesn't exists");
-  } catch {}
+
+    const error: CustomError = new Error();
+    error.errorMessage = "Product doesn't exists.";
+    error.statusCode = 400;
+    throw error;
+  } catch(err) {
+    next(err);
+  }
 };

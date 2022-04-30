@@ -14,13 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProduct = exports.getProducts = exports.postProduct = void 0;
 const product_1 = __importDefault(require("../models/product"));
-const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const postProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (!req.file) {
-            throw new Error('No file included.');
+            const error = new Error();
+            error.errorMessage = 'No file included.';
+            error.statusCode = 400;
+            throw error;
         }
         const { name, price, maxQuantity, featured, category, creator } = req.body;
-        const c = 'da21d12d12';
+        const c = 'creator';
         const imageUrl = 'http://localhost:3000/' + req.file.filename;
         const product = new product_1.default({
             name,
@@ -29,34 +32,40 @@ const postProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             featured,
             creator: c,
             imageUrl,
-            category
+            category,
         });
         const createdProduct = yield product.save();
         res.send(createdProduct);
     }
     catch (err) {
-        console.log(err);
+        next(err);
     }
 });
 exports.postProduct = postProduct;
-const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const creator = 'dsadasd';
+        const creator = 'creator';
         const filter = {
             name: req.query.name,
             featured: req.query.featured === 'true' ? true : false,
             creator: creator,
         };
-        const products = yield product_1.default.find(filter)
-            .limit(req.body.itemsPerPage)
-            .skip(req.body.itemsPerPage * req.body.page);
-        if (products) {
-            res.send(products);
-            return;
+        const length = yield product_1.default.find(filter).countDocuments();
+        let products;
+        const { itemsPerPage, page } = req.query;
+        if (itemsPerPage && page) {
+            products = yield product_1.default.find(filter)
+                .limit(+itemsPerPage)
+                .skip(+itemsPerPage * +page);
         }
-        throw new Error("Product doesn't exists");
+        else {
+            products = yield product_1.default.find(filter);
+        }
+        res.send({ length, products });
     }
-    catch (_a) { }
+    catch (error) {
+        next(error);
+    }
 });
 exports.getProducts = getProducts;
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -70,6 +79,6 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         throw new Error("Product doesn't exists");
     }
-    catch (_b) { }
+    catch (_a) { }
 });
 exports.getProduct = getProduct;
