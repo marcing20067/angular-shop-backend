@@ -50,8 +50,10 @@ export const getProducts = async (
 ) => {
   try {
     const creator = 'creator';
-    const filter = {
-      name: req.query.name,
+    let filter = {
+      name: {
+        $regex: new RegExp(`${req.query.name || ''}`, 'i'),
+      },
       featured: req.query.featured === 'true' ? true : false,
       creator: creator,
     };
@@ -91,7 +93,7 @@ export const getProduct = async (
     error.errorMessage = "Product doesn't exists.";
     error.statusCode = 400;
     throw error;
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 };

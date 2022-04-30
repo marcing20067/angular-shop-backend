@@ -5,7 +5,7 @@ const ErrorHandler = (req, res, next, err) => {
         .status(err.statusCode || 500)
         .send({
         message: err.errorMessage ||
-            'Wystąpił nieoczekiwany błąd. Prosimy spróbować później.',
+            'Unhandled error occurred.',
     });
 };
 exports.default = ErrorHandler;

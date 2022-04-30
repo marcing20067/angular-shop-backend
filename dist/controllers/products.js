@@ -45,8 +45,10 @@ exports.postProduct = postProduct;
 const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const creator = 'creator';
-        const filter = {
-            name: req.query.name,
+        let filter = {
+            name: {
+                $regex: new RegExp(`${req.query.name || ''}`, 'i'),
+            },
             featured: req.query.featured === 'true' ? true : false,
             creator: creator,
         };
@@ -68,17 +70,22 @@ const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getProducts = getProducts;
-const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const creator = 'dsadasd';
+        const creator = 'creator';
         const product = yield product_1.default.findOne({ _id: id, creator });
         if (product) {
             res.send(product);
             return;
         }
-        throw new Error("Product doesn't exists");
+        const error = new Error();
+        error.errorMessage = "Product doesn't exists.";
+        error.statusCode = 400;
+        throw error;
     }
-    catch (_a) { }
+    catch (err) {
+        next(err);
+    }
 });
 exports.getProduct = getProduct;
