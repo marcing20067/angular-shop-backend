@@ -16,14 +16,13 @@ export const postProduct = async (
     }
 
     const { name, price, maxQuantity, featured, category, creator } = req.body;
-    const c = 'creator';
     const imageUrl = 'http://localhost:3000/' + req.file.filename;
     const product = new Product({
       name,
       price,
       maxQuantity,
       featured,
-      creator: c,
+      creator,
       imageUrl,
       category,
     });
@@ -49,13 +48,11 @@ export const getProducts = async (
   next: NextFunction
 ) => {
   try {
-    const creator = 'creator';
     let filter = {
       name: {
         $regex: new RegExp(`${req.query.name || ''}`, 'i'),
       },
       featured: req.query.featured === 'true' ? true : false,
-      creator: creator,
     };
 
     const length = await Product.find(filter).countDocuments();
@@ -82,17 +79,14 @@ export const getProduct = async (
 ) => {
   const { id } = req.params;
   try {
-    const creator = 'creator';
-    const product = await Product.findOne({ _id: id, creator });
-    if (product) {
-      res.send(product);
-      return;
+    const product = await Product.findOne({ _id: id });
+    if (!product) {
+      const error: CustomError = new Error();
+      error.errorMessage = "Product doesn't exists.";
+      error.statusCode = 400;
+      throw error;
     }
-
-    const error: CustomError = new Error();
-    error.errorMessage = "Product doesn't exists.";
-    error.statusCode = 400;
-    throw error;
+    res.send(product);
   } catch (err) {
     console.log(err);
     next(err);
