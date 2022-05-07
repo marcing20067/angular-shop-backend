@@ -85,6 +85,7 @@ const getProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         throw error;
     }
     catch (err) {
+        console.log(err);
         next(err);
     }
 });

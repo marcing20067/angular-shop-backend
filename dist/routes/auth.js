@@ -27,10 +27,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const ProductsController = __importStar(require("../controllers/products"));
-const file_upload_1 = __importDefault(require("../middlewares/file-upload"));
+const AuthController = __importStar(require("../controllers/auth"));
 const router = express_1.default.Router();
-router.post('', file_upload_1.default, ProductsController.postProduct);
-router.get('', ProductsController.getProducts);
-router.get('/:id', ProductsController.getProduct);
+router.get('signup', AuthController.postSignup);
+router.get('login', AuthController.postLogin);
 exports.default = router;

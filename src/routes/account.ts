@@ -3,6 +3,7 @@ import * as AccountController from '../controllers/account';
 const router = express.Router();
 
 router.get('', AccountController.getAccount);
-router.post('password', AccountController.postResetPassword);
+router.post('/password', AccountController.postResetPassword);
+router.post('/pay', AccountController.postPay);
 
 export default router;

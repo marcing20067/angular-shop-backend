@@ -94,6 +94,7 @@ export const getProduct = async (
     error.statusCode = 400;
     throw error;
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };

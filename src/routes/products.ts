@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post('', fileUpload, ProductsController.postProduct);
 router.get('', ProductsController.getProducts);
-router.get(':id', ProductsController.getProduct);
+router.get('/:id', ProductsController.getProduct);
 
 export default router;
