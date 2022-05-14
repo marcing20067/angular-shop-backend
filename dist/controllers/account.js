@@ -9,13 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postPay = exports.postResetPassword = exports.getAccount = void 0;
+exports.postPay = void 0;
 const stripe = require('stripe')(process.env.STRIPE_KEY);
-const getAccount = () => { };
-exports.getAccount = getAccount;
-const postResetPassword = () => {
-};
-exports.postResetPassword = postResetPassword;
 const postPay = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const cart = req.body.cart.items.map((i) => {
@@ -30,12 +25,10 @@ const postPay = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
                 quantity: i.quantity,
             };
         });
-        console.log('=== cart ===');
-        console.log(cart);
         const session = yield stripe.checkout.sessions.create({
             line_items: cart,
             mode: 'payment',
-            success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${process.env.FRONTEND_URL}/cart`,
             cancel_url: `${process.env.FRONTEND_URL}/cart`,
         });
         res.status(201).send({
@@ -43,7 +36,6 @@ const postPay = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
     catch (err) {
-        console.log(err);
         next(err);
     }
 });

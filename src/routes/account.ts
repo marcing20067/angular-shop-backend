@@ -1,9 +1,8 @@
 import express from 'express';
 import * as AccountController from '../controllers/account';
 const router = express.Router();
+import AuthMiddleware from '../middlewares/auth';
 
-router.get('', AccountController.getAccount);
-router.post('/password', AccountController.postResetPassword);
-router.post('/pay', AccountController.postPay);
+router.post('/pay', AuthMiddleware, AccountController.postPay);
 
 export default router;

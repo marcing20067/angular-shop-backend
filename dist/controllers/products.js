@@ -22,15 +22,13 @@ const postProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             error.statusCode = 400;
             throw error;
         }
-        const { name, price, maxQuantity, featured, category, creator } = req.body;
-        const c = 'creator';
+        const { name, price, featured, category, creator } = req.body;
         const imageUrl = 'http://localhost:3000/' + req.file.filename;
         const product = new product_1.default({
             name,
             price,
-            maxQuantity,
             featured,
-            creator: c,
+            creator,
             imageUrl,
             category,
         });
@@ -44,13 +42,11 @@ const postProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.postProduct = postProduct;
 const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const creator = 'creator';
         let filter = {
             name: {
                 $regex: new RegExp(`${req.query.name || ''}`, 'i'),
             },
             featured: req.query.featured === 'true' ? true : false,
-            creator: creator,
         };
         const length = yield product_1.default.find(filter).countDocuments();
         let products;
@@ -73,16 +69,14 @@ exports.getProducts = getProducts;
 const getProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const creator = 'creator';
-        const product = yield product_1.default.findOne({ _id: id, creator });
-        if (product) {
-            res.send(product);
-            return;
+        const product = yield product_1.default.findOne({ _id: id });
+        if (!product) {
+            const error = new Error();
+            error.errorMessage = "Product doesn't exists.";
+            error.statusCode = 400;
+            throw error;
         }
-        const error = new Error();
-        error.errorMessage = "Product doesn't exists.";
-        error.statusCode = 400;
-        throw error;
+        res.send(product);
     }
     catch (err) {
         console.log(err);

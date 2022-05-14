@@ -15,12 +15,11 @@ export const postProduct = async (
       throw error;
     }
 
-    const { name, price, maxQuantity, featured, category, creator } = req.body;
+    const { name, price, featured, category, creator } = req.body;
     const imageUrl = 'http://localhost:3000/' + req.file.filename;
     const product = new Product({
       name,
       price,
-      maxQuantity,
       featured,
       creator,
       imageUrl,
