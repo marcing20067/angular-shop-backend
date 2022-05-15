@@ -7,9 +7,12 @@ import AuthRouter from './routes/auth';
 import AccountRouter from './routes/account';
 import bodyParser from 'body-parser';
 import ErrorHandler from './middlewares/error';
+import morgan from 'morgan';
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 app.use('/products', ProductsRouter);

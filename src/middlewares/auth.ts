@@ -17,7 +17,7 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     if (!accessToken) {
       const err: CustomError = new Error();
       err.errorMessage = 'No token included.';
-      err.statusCode = 400;
+      err.statusCode = 401;
       throw err;
     }
     const payload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET!);

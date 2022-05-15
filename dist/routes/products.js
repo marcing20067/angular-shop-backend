@@ -32,6 +32,6 @@ const file_upload_1 = __importDefault(require("../middlewares/file-upload"));
 const auth_1 = __importDefault(require("../middlewares/auth"));
 const router = express_1.default.Router();
 router.post('', auth_1.default, file_upload_1.default, ProductsController.postProduct);
-router.get('', auth_1.default, ProductsController.getProducts);
-router.get('/:id', auth_1.default, ProductsController.getProduct);
+router.get('', ProductsController.getProducts);
+router.get('/:id', ProductsController.getProduct);
 exports.default = router;

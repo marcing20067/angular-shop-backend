@@ -5,7 +5,7 @@ import AuthMiddleware from '../middlewares/auth';
 const router = express.Router();
 
 router.post('', AuthMiddleware, fileUpload, ProductsController.postProduct);
-router.get('', AuthMiddleware, ProductsController.getProducts);
-router.get('/:id', AuthMiddleware, ProductsController.getProduct);
+router.get('', ProductsController.getProducts);
+router.get('/:id', ProductsController.getProduct);
 
 export default router;
