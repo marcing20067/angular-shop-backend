@@ -7,6 +7,7 @@ const ErrorHandler: ErrorRequestHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(err);
   res.status(err.statusCode || 500).send({
     message: err.errorMessage || 'Unhandled error occurred.',
   });

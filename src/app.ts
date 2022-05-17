@@ -8,13 +8,15 @@ import AccountRouter from './routes/account';
 import bodyParser from 'body-parser';
 import ErrorHandler from './middlewares/error';
 import morgan from 'morgan';
+import FrontendPage from './middlewares/frontend-page';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(morgan('dev'));
-
 app.use(bodyParser.json());
+
+app.use(FrontendPage);
 app.use('/products', ProductsRouter);
 app.use('/account', AccountRouter);
 app.use('/auth', AuthRouter);
