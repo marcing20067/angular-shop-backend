@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Cart } from '../models/cart';
+import User from '../models/user';
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 export const postPay = async (
@@ -29,6 +30,28 @@ export const postPay = async (
     });
     res.status(201).send({
       url: session.url,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.userData?._id;
+  try {
+    const user = await User.findOne({ _id: userId });
+    let stars = '';
+    for (let i = 0; i < user!.password.length; i++) {
+      stars += '*';
+    }
+
+    res.send({
+      username: user!.username,
+      password: stars,
     });
   } catch (err) {
     next(err);

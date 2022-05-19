@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postPay = void 0;
+exports.getAccount = exports.postPay = void 0;
+const user_1 = __importDefault(require("../models/user"));
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 const postPay = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -40,3 +44,22 @@ const postPay = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.postPay = postPay;
+const getAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const userId = (_a = req.userData) === null || _a === void 0 ? void 0 : _a._id;
+    try {
+        const user = yield user_1.default.findOne({ _id: userId });
+        let stars = '';
+        for (let i = 0; i < user.password.length; i++) {
+            stars += '*';
+        }
+        res.send({
+            username: user.username,
+            password: stars,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.getAccount = getAccount;

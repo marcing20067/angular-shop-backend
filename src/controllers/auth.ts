@@ -38,25 +38,6 @@ export const postLogin = async (
   }
 };
 
-export const postSignup = async (
-  req: Request<{}, {}, User>,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { username, password } = req.body;
-    const hashedPassword = await bcryptjs.hash(password, 10);
-    const user = new User({
-      username,
-      password: hashedPassword,
-    });
-    const createdUser = await user.save();
-    res.status(201).send({});
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const postRefresh = async (
   req: Request,
   res: Response<{ accessToken: string }>,
