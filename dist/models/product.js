@@ -10,7 +10,6 @@ const productSchema = new Schema({
     price: { required: true, type: Number },
     imageUrl: { required: true, type: String },
     featured: { required: true, type: Boolean },
-    creator: { required: true, type: String },
     category: { required: true, type: String }
 });
 const Product = mongoose_1.default.model('Product', productSchema);

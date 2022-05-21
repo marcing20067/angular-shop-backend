@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/user';
-import bcryptjs from 'bcryptjs';
 import { CustomError } from '../helpers/custom-error';
 import jwt from 'jsonwebtoken';
 import { UserData } from '../models/user-data';
@@ -8,28 +7,31 @@ import { setRefreshToken, createTokens } from '../helpers/token';
 
 export const postLogin = async (
   req: Request<{}, { accessToken: string }, User>,
-  res: Response<{ accessToken: string }>,
+  res: Response<{
+    accessToken: string;
+    accessExpiresIn: number;
+    refreshExpiresIn: number;
+  }>,
   next: NextFunction
 ) => {
   try {
     const { username } = req.body;
     const user = await User.findOne({ username });
-    if (!user) {
+    if (!user || user.username !== username) {
       const error: CustomError = new Error();
       error.errorMessage = 'Wrong request data.';
       error.statusCode = 400;
       throw error;
     }
-    const isPasswordCorrect = await bcryptjs.compare(username, user.username);
-    if (!isPasswordCorrect) {
-      return;
-    }
 
-    const { accessToken, refreshToken } = createTokens({ _id: user._id! });
+    const { accessToken, accessExpiresIn, refreshToken, refreshExpiresIn } =
+      createTokens({ _id: user._id! });
     setRefreshToken(res, refreshToken);
 
     res.send({
       accessToken,
+      accessExpiresIn,
+      refreshExpiresIn,
     });
 
     return;
@@ -40,7 +42,11 @@ export const postLogin = async (
 
 export const postRefresh = async (
   req: Request,
-  res: Response<{ accessToken: string }>,
+  res: Response<{
+    accessToken: string;
+    accessExpiresIn: number;
+    refreshExpiresIn: number;
+  }>,
   next: NextFunction
 ) => {
   try {
@@ -57,12 +63,15 @@ export const postRefresh = async (
     const accessPayload = jwt.verify(oldRefreshToken, JWT_ACCESS_SECRET!);
     const refreshPayload = jwt.verify(oldAccessToken, JWT_REFRESH_SECRET!);
 
-    const { accessToken, refreshToken } = createTokens(
-      accessPayload as UserData
-    );
+    const { accessToken, accessExpiresIn, refreshToken, refreshExpiresIn } =
+      createTokens(accessPayload as UserData);
+
     setRefreshToken(res, refreshToken);
+
     res.send({
       accessToken,
+      accessExpiresIn,
+      refreshExpiresIn,
     });
   } catch (err) {
     next(err);

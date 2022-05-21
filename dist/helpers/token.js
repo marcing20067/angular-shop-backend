@@ -15,7 +15,9 @@ const createTokens = (payload) => {
     });
     return {
         accessToken,
+        accessExpiresIn: +JWT_ACCESS_AGE,
         refreshToken,
+        refreshExpiresIn: +JWT_REFRESH_AGE,
     };
 };
 exports.createTokens = createTokens;

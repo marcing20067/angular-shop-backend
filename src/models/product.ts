@@ -7,7 +7,6 @@ interface Product {
   price: number;
   imageUrl: string;
   featured: boolean;
-  creator: string;
   category: string;
 }
 
@@ -16,7 +15,6 @@ const productSchema = new Schema<Product>({
   price: { required: true, type: Number },
   imageUrl: { required: true, type: String },
   featured: { required: true, type: Boolean },
-  creator: { required: true, type: String },
   category: { required: true, type: String }
 });
 

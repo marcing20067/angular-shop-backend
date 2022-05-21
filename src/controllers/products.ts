@@ -15,13 +15,12 @@ export const postProduct = async (
       throw error;
     }
 
-    const { name, price, featured, category, creator } = req.body;
+    const { name, price, featured, category } = req.body;
     const imageUrl = 'http://localhost:3000/' + req.file.filename;
     const product = new Product({
       name,
       price,
       featured,
-      creator,
       imageUrl,
       category,
     });
@@ -47,12 +46,15 @@ export const getProducts = async (
   next: NextFunction
 ) => {
   try {
-    let filter = {
+    let filter: any = {
       name: {
         $regex: new RegExp(`${req.query.name || ''}`, 'i'),
       },
-      featured: req.query.featured === 'true' ? true : false,
     };
+
+    if (req.query.featured) {
+      filter.featured = req.query.featured === 'true' ? true : false;
+    }
 
     const length = await Product.find(filter).countDocuments();
     let products: Product[];

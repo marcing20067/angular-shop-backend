@@ -30,6 +30,6 @@ const express_1 = __importDefault(require("express"));
 const AccountController = __importStar(require("../controllers/account"));
 const router = express_1.default.Router();
 const auth_1 = __importDefault(require("../middlewares/auth"));
-router.post('/pay', auth_1.default, AccountController.postPay);
+router.post('/pay', AccountController.postPay);
 router.get('', auth_1.default, AccountController.getAccount);
 exports.default = router;

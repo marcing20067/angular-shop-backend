@@ -19,7 +19,9 @@ export const createTokens = (payload: UserData) => {
 
   return {
     accessToken,
+    accessExpiresIn: +JWT_ACCESS_AGE!,
     refreshToken,
+    refreshExpiresIn: +JWT_REFRESH_AGE!,
   };
 };
 
@@ -32,4 +34,3 @@ export const setRefreshToken = (res: Response, refreshToken: string) => {
     maxAge: +JWT_REFRESH_AGE!,
   });
 };
-

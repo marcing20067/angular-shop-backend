@@ -22,13 +22,12 @@ const postProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             error.statusCode = 400;
             throw error;
         }
-        const { name, price, featured, category, creator } = req.body;
+        const { name, price, featured, category } = req.body;
         const imageUrl = 'http://localhost:3000/' + req.file.filename;
         const product = new product_1.default({
             name,
             price,
             featured,
-            creator,
             imageUrl,
             category,
         });
@@ -46,8 +45,10 @@ const getProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
             name: {
                 $regex: new RegExp(`${req.query.name || ''}`, 'i'),
             },
-            featured: req.query.featured === 'true' ? true : false,
         };
+        if (req.query.featured) {
+            filter.featured = req.query.featured === 'true' ? true : false;
+        }
         const length = yield product_1.default.find(filter).countDocuments();
         let products;
         const { itemsPerPage, page } = req.query;
