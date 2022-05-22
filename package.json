@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "heroku-prebuild": "bash build.sh",
     "start": "tsc-watch -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
     "test": "jest"
   },
