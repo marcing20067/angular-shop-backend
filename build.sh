@@ -1,4 +1,5 @@
 npm install @angular/cli -g
+npm install tsc-watch -g
 
 #!/usr/bin/env bash
 
