@@ -6,7 +6,7 @@
   "scripts": {
     "heroku-prebuild": "bash build.sh",
     "start": "tsc-watch -p ./tsconfig.json --onSuccess \"node ./dist/app.js\"",
-    "start:prod": "npm install tsc-watch && npm start",
+    "start:prod": "npm install -g tsc-watch && npm start",
     "test": "jest"
   },
   "author": "",
