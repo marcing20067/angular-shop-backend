@@ -18,5 +18,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "exclude": ["test"]
+  "exclude": ["frontend"]
 }
