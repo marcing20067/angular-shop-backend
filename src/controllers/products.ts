@@ -16,7 +16,7 @@ export const postProduct = async (
     }
 
     const { name, price, featured, category } = req.body;
-    const imageUrl = '/images/' + req.file.filename;
+    const imageUrl = 'images/' + req.file.filename;
     const product = new Product({
       name,
       price,
