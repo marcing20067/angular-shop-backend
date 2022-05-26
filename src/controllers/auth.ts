@@ -50,7 +50,7 @@ export const postRefresh = async (
   next: NextFunction
 ) => {
   try {
-    const oldRefreshToken = req.cookies.refresh;
+    const oldRefreshToken = (req.cookies || {}).refresh;
     const oldAccessToken = req.headers.authorization?.split(' ')[1];
     if (!oldAccessToken || !oldRefreshToken) {
       const err: CustomError = new Error();
